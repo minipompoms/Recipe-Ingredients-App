@@ -4,13 +4,14 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class IngredientsModule extends AbstractModule {
+public class SpoonacularModule extends AbstractModule {
+    String BASE_URL = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/";
 
     @Override
     protected void configure() {
         super.configure();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/")
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())//takes calladapterfactory and changes into retrofit
                 .build();

@@ -1,93 +1,37 @@
 package recipeIngredients;
 
-import com.google.gson.annotations.SerializedName;
-import testAPI.ExtendedIngredient;
+import recipeIngredients.ExtendedIngredient;
 
 import java.util.List;
 
-/**
- * Created by samirtf on 18/02/17.
- */
 public class RecipeInformation {
 
-
-    @SerializedName("vegeratian")
-    private boolean vegetarian = false;
-
-    @SerializedName("vegan")
-    private boolean vegan = false;
-
-    @SerializedName("glutenFree")
-    private boolean glutenFree = true;
-
-    @SerializedName("dairyFree")
-    private boolean dairyFree = true;
-
-    @SerializedName("veryHealthy")
-    private boolean veryHealthy = false;
-
-    @SerializedName("cheap")
-    private boolean cheap = false;
-
-    @SerializedName("veryPopular")
-    private boolean veryPopular = false;
-
-    @SerializedName("sustainable")
-    private boolean sustainable = false;
-
-    @SerializedName("weightWatcherSmartPoints")
-    private int weightWatcherSmartPoints = 21;
-
-    @SerializedName("gaps")
-    private String gaps = "no";
-
-    @SerializedName("lowFodmap")
-    private boolean lowFodmap = false;
-
-    @SerializedName("ketogenic")
-    private boolean ketogenic = false;
-
-    @SerializedName("whole30")
-    private boolean whole30 = false;
-
-    @SerializedName("servings")
-    private int servings = 10;
-
-    @SerializedName("sourceUrl")
-    private String sourceUrl = "http://www.epicurious.com/recipes/food/views/Char-Grilled-Beef-Tenderloin-with-Three-Herb-Chimichurri-235342";
-
-    @SerializedName("spoonacularSourceUrl")
-    private String spoonacularSourceUrl = "https://spoonacular.com/char-grilled-beef-tenderloin-with-three-herb-chimichurri-156992";
-
-    @SerializedName("aggregateLikes")
-    private int aggregateLikes = 0;
-
-    @SerializedName("creditText")
-    private String creditText = "Epicurious";
-
-    @SerializedName("sourceName")
-    private String sourceName = "Epicurious";
-
-    @SerializedName("extendedIngredients")
+    private boolean vegetarian;
+    private boolean vegan;
+    private boolean glutenFree;
+    private boolean dairyFree;
+    private boolean veryHealthy;
+    private boolean cheap;
+    private boolean veryPopular;
+    private boolean sustainable;
+    private int weightWatcherSmartPoints;
+    private String gaps;
+    private boolean lowFodmap;
+    private boolean ketogenic;
+    private boolean whole30;
+    private int servings;
+    private String sourceUrl;
+    private String spoonacularSourceUrl;
+    private int aggregateLikes;
+    private String creditText;
+    private String sourceName;
     private List<ExtendedIngredient> extendedIngredients;
-
-    @SerializedName("id")
-    private int id = 0;
-
-    @SerializedName("title")
-    private String title = "Char-Grilled Beef Tenderloin with Three-Herb Chimichurri";
-
-    @SerializedName("readyInMinutes")
-    private int readyInMinutes = 45;
-
-    @SerializedName("image")
-    private String image = "https://spoonacular.com/recipeImages/char-grilled-beef-tenderloin-with-three-herb-chimichurri-156992.jpg";
-
-    @SerializedName("imageType")
-    private String imageType = "jpg";
-
-    @SerializedName("instructions")
-    private String instructions = "PreparationFor spice rub:";
+    private int id;
+    private String title;
+    private int readyInMinutes;
+    private String image;
+    private String imageType;
+    private String instructions;
 
     public RecipeInformation() {}
 
@@ -338,33 +282,32 @@ public class RecipeInformation {
 
     @Override
     public String toString() {
-        return "RecipeInformation{" +
-                "vegetarian=" + vegetarian +
-                ", vegan=" + vegan +
-                ", glutenFree=" + glutenFree +
-                ", dairyFree=" + dairyFree +
-                ", veryHealthy=" + veryHealthy +
-                ", cheap=" + cheap +
-                ", veryPopular=" + veryPopular +
-                ", sustainable=" + sustainable +
-                ", weightWatcherSmartPoints=" + weightWatcherSmartPoints +
-                ", gaps='" + gaps + '\'' +
-                ", lowFodmap=" + lowFodmap +
-                ", ketogenic=" + ketogenic +
-                ", whole30=" + whole30 +
-                ", servings=" + servings +
-                ", sourceUrl='" + sourceUrl + '\'' +
-                ", spoonacularSourceUrl='" + spoonacularSourceUrl + '\'' +
-                ", aggregateLikes=" + aggregateLikes +
-                ", creditText='" + creditText + '\'' +
-                ", sourceName='" + sourceName + '\'' +
-                ", extendedIngredients=" + extendedIngredients +
-                ", id=" + id +
-                ", title='" + title + '\'' +
-                ", readyInMinutes=" + readyInMinutes +
-                ", image='" + image + '\'' +
-                ", imageType='" + imageType + '\'' +
-                ", instructions='" + instructions + '\'' +
-                '}';
+        return "RecipeInformation:" +
+                " \nvegetarian=" + vegetarian +
+                " \nvegan=" + vegan +
+                " \nglutenFree=" + glutenFree +
+                " \ndairyFree=" + dairyFree +
+                " \nveryHealthy=" + veryHealthy +
+                " \ncheap=" + cheap +
+                " \nveryPopular=" + veryPopular +
+                " \nsustainable=" + sustainable +
+                " \nweightWatcherSmartPoints=" + weightWatcherSmartPoints +
+                " \ngaps='" + gaps + '\'' +
+                " \nlowFodmap=" + lowFodmap +
+                " \nketogenic=" + ketogenic +
+                " \nwhole30=" + whole30 +
+                " \nservings=" + servings +
+                " \nsourceUrl='" + sourceUrl + '\'' +
+                " \nspoonacularSourceUrl='" + spoonacularSourceUrl + '\'' +
+                " \naggregateLikes=" + aggregateLikes +
+                " \ncreditText='" + creditText + '\'' +
+                " \nsourceName='" + sourceName + '\'' +
+                " \nextendedIngredients=" + extendedIngredients +
+                " \nid=" + id +
+                " \ntitle='" + title + '\'' +
+                " \neadyInMinutes=" + readyInMinutes +
+                " \nimage='" + image + '\'' +
+                " \nimageType='" + imageType + '\'' +
+                " \ninstructions='" + instructions + '\'';
     }
 }
