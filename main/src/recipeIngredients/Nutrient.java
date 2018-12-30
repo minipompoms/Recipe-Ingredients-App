@@ -38,4 +38,13 @@ public class Nutrient {
     public void setPercentOfDailyNeeds(double percentOfDailyNeeds) {
         this.percentOfDailyNeeds = percentOfDailyNeeds;
     }
+
+    @Override
+    public String toString() {
+        return "Nutrients: " +
+                "\ntitle: " + title +
+                "\namount: " + amount +
+                "\nunit: " + unit +
+                "\npercent of daily needs: " + percentOfDailyNeeds;
+    }
 }

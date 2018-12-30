@@ -3,7 +3,7 @@ package recipeIngredients;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.sun.codemodel.internal.JLabel;
+import com.sun.tools.javac.util.List;
 
 
 import javax.inject.Singleton;
@@ -12,15 +12,17 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 @Singleton
 
 public class SpoonacularView extends JFrame {
+    private ExtendedIngredient extendedIngredient = new ExtendedIngredient();
     private JTextArea recipeInfo;
     private JTextField recipeTitle;
     private javax.swing.JLabel foodJoke;
-    private JTextArea random;
-
+    private JTextArea recipeByIngredient;
+    private JTextField ingredientsEntered;
 
     @Inject
     public SpoonacularView(SpoonacularController controller){
@@ -30,21 +32,29 @@ public class SpoonacularView extends JFrame {
         setTitle("Recipe Info ...");
         Border border = BorderFactory.createEmptyBorder(20, 20, 20, 20);
         JPanel panel = new JPanel();
+        FlowLayout fl = new FlowLayout(FlowLayout.TRAILING, 30, 10);
+        JPanel entries = new JPanel();
+        entries.setLayout(fl);
         panel.setLayout(new BorderLayout());
         panel.setBorder(border);
+        ingredientsEntered = new JTextField();
         recipeTitle = new JTextField();
         recipeInfo = new JTextArea();
         foodJoke = new javax.swing.JLabel();
-        random = new JTextArea();
-        //panel.add(random, BorderLayout.CENTER);
+        recipeByIngredient = new JTextArea();
+        //String ingredients = ingredientsEntered.getText();
+        JScrollPane scrollPane = new JScrollPane(recipeByIngredient);
+        panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(foodJoke, BorderLayout.SOUTH);
-        panel.add(recipeInfo, BorderLayout.CENTER);
-        panel.add(recipeTitle, BorderLayout.NORTH);
+        //panel.add(recipeInfo, BorderLayout.CENTER);
+        entries.add(recipeTitle);
+        panel.add(entries, BorderLayout.WEST);
         add(panel);
-        //controller.getRandomRecipe();
-        controller.getRecipe(15694);
+
+        controller.findByIngredients("sugar,flour,cheese");
+        controller.getRecipeInformation(15694);
         controller.getRandomJoke();
-        //controller.searchRecipe();
+        controller.searchRecipe();
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -66,16 +76,23 @@ public class SpoonacularView extends JFrame {
 
     }
 
-    public void setRandomRecipe(SpoonacularFeed feed){
-        String text = feed.getRandomRecipes().toString();
-        random.setText(text);
+    public void setFindByIngredient(ArrayList<Recipe> feed){
+        StringBuilder recipes = new StringBuilder();
+        for(int i = 0; i < feed.size(); i++){
+            recipes.append("\t");
+            recipes.append(feed.get(i).getId()).append("\t");
+            recipes.append(feed.get(i).getTitle());
+            recipes.append("\n");
+
+        }
+        recipeByIngredient.setText(recipes.toString());
 
     }
 
     public void setRecipeList(SpoonacularFeed feed){
         String text = feed.getRecipeList().toString();
 
-        System.out.println(text);
+        //System.out.println(text);
     }
 
 

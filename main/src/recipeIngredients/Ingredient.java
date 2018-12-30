@@ -13,14 +13,13 @@ public class Ingredient {
 
     @Override
     public String toString(){
-        return "Food{" +
-                "id=" + id +
-                ", name=" + name +
-                ", image='" + image + '\'' +
-                ", aisle=" + aisle +
-                ", amount=" + amount +
-                ", unit=" + unit +
-                '}';
+        return "Food: " +
+                "\n id: " + id +
+                "\n name: " + name +
+                "\n image: " + image +
+                "\n aisle: " + aisle +
+                "\n amount: " + amount +
+                "\n unit: " + unit;
     }
 
 }

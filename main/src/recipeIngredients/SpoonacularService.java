@@ -6,6 +6,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.sun.tools.javac.util.List;
 import io.reactivex.Observable;
 import jdk.nashorn.internal.ir.RuntimeNode;
 import okhttp3.Cache;
@@ -18,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.*;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
 public interface SpoonacularService {
 
@@ -27,21 +28,23 @@ public interface SpoonacularService {
             @Header("X-RapidAPI-Key") String RapidAPIKey,
             @Query("number") int number);
 
+    @GET("recipes/{id}/summary")
+    Observable<SpoonacularFeed> getQuickSummary(
+            @Header("X-RapidAPI-Key") String RapidAPIKey,
+            @Path("id") int id);
+
     @GET("recipes/search")
-    Observable<SpoonacularFeed> searchRecipe(
+    Observable<SpoonacularFeed>searchRecipeList(
             @Header("X-RapidAPI-Key") String RapidAPIKey,
             @Query("query") String keyword,
-            @Query("number") int number,
-            @Query("offset") int offset);
+            @Query("number") int number);
+
 
     @GET("recipes/findByIngredients")
-    Observable<List<SpoonacularFeed>> findRecipeByIngredients(
+    Observable<ArrayList<Recipe>>findRecipeByIngredients(
             @Header("X-RapidAPI-Key") String RapidAPIKey,
-            @Query("fillIngredients") boolean fillIngredients,
             @Query("ingredients") String ingredients,
-            @Query("limitLicense") boolean limitLicense,
-            @Query("number") Integer number,
-            @Query("ranking") Integer ranking);
+            @Query("number") int number);
 
 
     @GET("recipes/{id}/information")

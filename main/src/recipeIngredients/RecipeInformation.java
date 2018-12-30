@@ -6,56 +6,32 @@ import java.util.List;
 public class RecipeInformation {
 
 
-    private boolean vegetarian = false;
-
-    private boolean vegan = false;
-
-    private boolean glutenFree = true;
-
-    private boolean dairyFree = true;
-
-    private boolean veryHealthy = false;
-
-    private boolean cheap = false;
-
-    private boolean veryPopular = false;
-
-    private boolean sustainable = false;
-
-    private int weightWatcherSmartPoints = 21;
-
-    private String gaps = "no";
-
-    private boolean lowFodmap = false;
-
-    private boolean ketogenic = false;
-    private boolean whole30 = false;
-
-    private int servings = 10;
-
-    private String sourceUrl = "http://www.epicurious.com/recipes/food/views/Char-Grilled-Beef-Tenderloin-with-Three-Herb-Chimichurri-235342";
-
-    private String spoonacularSourceUrl = "https://spoonacular.com/char-grilled-beef-tenderloin-with-three-herb-chimichurri-156992";
-
-    private int aggregateLikes = 0;
-
-    private String creditText = "Epicurious";
-
-    private String sourceName = "Epicurious";
-
+    private boolean vegetarian;
+    private boolean vegan;
+    private boolean glutenFree;
+    private boolean dairyFree;
+    private boolean veryHealthy;
+    private boolean cheap;
+    private boolean veryPopular;
+    private boolean sustainable;
+    private int weightWatcherSmartPoints;
+    private String gaps;
+    private boolean lowFodmap;
+    private boolean ketogenic;
+    private boolean whole30;
+    private int servings;
+    private String sourceUrl;
+    private String spoonacularSourceUrl;
+    private int aggregateLikes;
+    private String creditText;
+    private String sourceName;
     private List<ExtendedIngredient> extendedIngredients;
-
-    private int id = 0;
-
-    private String title = "Char-Grilled Beef Tenderloin with Three-Herb Chimichurri";
-
-    private int readyInMinutes = 45;
-
-    private String image = "https://spoonacular.com/recipeImages/char-grilled-beef-tenderloin-with-three-herb-chimichurri-156992.jpg";
-
-    private String imageType = "jpg";
-
-    private String instructions = "PreparationFor spice rub:";
+    private int id;
+    private String title;
+    private int readyInMinutes;
+    private String image;
+    private String imageType;
+    private String instructions;
 
     public RecipeInformation() {}
 
@@ -306,33 +282,33 @@ public class RecipeInformation {
 
     @Override
     public String toString() {
-        return "RecipeInformation{" +
-                "vegetarian=" + vegetarian +
-                ", vegan=" + vegan +
-                ", glutenFree=" + glutenFree +
-                ", dairyFree=" + dairyFree +
-                ", veryHealthy=" + veryHealthy +
-                ", cheap=" + cheap +
-                ", veryPopular=" + veryPopular +
-                ", sustainable=" + sustainable +
-                ", weightWatcherSmartPoints=" + weightWatcherSmartPoints +
-                ", gaps='" + gaps + '\'' +
-                ", lowFodmap=" + lowFodmap +
-                ", ketogenic=" + ketogenic +
-                ", whole30=" + whole30 +
-                ", servings=" + servings +
-                ", sourceUrl='" + sourceUrl + '\'' +
-                ", spoonacularSourceUrl='" + spoonacularSourceUrl + '\'' +
-                ", aggregateLikes=" + aggregateLikes +
-                ", creditText='" + creditText + '\'' +
-                ", sourceName='" + sourceName + '\'' +
-                ", extendedIngredients=" + extendedIngredients +
-                ", id=" + id +
-                ", title='" + title + '\'' +
-                ", readyInMinutes=" + readyInMinutes +
-                ", image='" + image + '\'' +
-                ", imageType='" + imageType + '\'' +
-                ", instructions='" + instructions + '\'' +
-                '}';
+        return "RecipeInformation:" +
+                "\n vegetarian=" + vegetarian +
+                "\n vegan=" + vegan +
+                "\n glutenFree=" + glutenFree +
+                "\n dairyFree=" + dairyFree +
+                "\n veryHealthy=" + veryHealthy +
+                "\n cheap=" + cheap +
+                "\n veryPopular=" + veryPopular +
+                "\n sustainable=" + sustainable +
+                "\n weightWatcherSmartPoints=" + weightWatcherSmartPoints +
+                "\n gaps='" + gaps + '\'' +
+                "\n lowFodmap=" + lowFodmap +
+                "\n ketogenic=" + ketogenic +
+                "\n whole30=" + whole30 +
+                "\n servings=" + servings +
+                "\n sourceUrl='" + sourceUrl + '\'' +
+                "\n spoonacularSourceUrl='" + spoonacularSourceUrl + '\'' +
+                "\n aggregateLikes=" + aggregateLikes +
+                "\n creditText='" + creditText + '\'' +
+                "\n sourceName='" + sourceName + '\'' +
+                "\n extendedIngredients=" + extendedIngredients +
+                "\n id=" + id +
+                "\n title='" + title + '\'' +
+                "\n readyInMinutes=" + readyInMinutes +
+                "\n image='" + image + '\'' +
+                "\n imageType='" + imageType + '\'' +
+                "\n instructions='" + instructions;
+
     }
 }
