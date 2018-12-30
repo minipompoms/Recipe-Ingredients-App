@@ -29,7 +29,7 @@ public interface SpoonacularService {
             @Query("number") int number);
 
     @GET("recipes/{id}/summary")
-    Observable<SpoonacularFeed> getQuickSummary(
+    Observable<Recipe> getQuickSummary(
             @Header("X-RapidAPI-Key") String RapidAPIKey,
             @Path("id") int id);
 

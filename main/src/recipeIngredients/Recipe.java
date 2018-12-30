@@ -8,8 +8,13 @@ public class Recipe {
     private String image;
     private String usedIngredientCount;
     private String missedIngredientCount;
+    private String summary;
 
 
+    public Recipe(){}
+
+
+    public void setSummary(String summary) { this.summary = summary; }
     public void setId(int id) {
         this.id = id;
     }
@@ -23,7 +28,7 @@ public class Recipe {
         this.image = image;
     }
 
-    public Recipe(){}
+    public String getSummary() { return summary; }
     public int getId() {
         return id;
     }

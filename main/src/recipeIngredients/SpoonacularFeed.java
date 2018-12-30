@@ -3,6 +3,7 @@ package recipeIngredients;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,6 @@ public class SpoonacularFeed extends AbstractModule {
     private Nutrient nutrient;
     private String text;
     private List<Recipe> results;
-
 
 
     @Inject
@@ -40,7 +40,9 @@ public class SpoonacularFeed extends AbstractModule {
         return results;
     }
 
-
+    public String getSummary(){
+        return recipe.getSummary();
+    }
 
     public RecipeInformation getRecipeInfo(){
         return recipeInfo;
@@ -50,5 +52,7 @@ public class SpoonacularFeed extends AbstractModule {
         return text;
     }
 
-
+    public String getImageIcon(){
+        return recipeInfo.getImage();
+    }
 }

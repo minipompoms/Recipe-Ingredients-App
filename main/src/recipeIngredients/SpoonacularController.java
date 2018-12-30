@@ -45,17 +45,29 @@ public class SpoonacularController {
 
 
     public void searchRecipe(){
-        disposable = service.searchRecipeList(APIKEY, "burger", 4)
+        disposable = service.searchRecipeList(APIKEY, "burger", 3)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(this::setRecipeSearch, Throwable::printStackTrace);
     }
 
-    public void findByIngredients(String ingredientList){
-        disposable = service.findRecipeByIngredients(APIKEY, ingredientList, 5)
+    public void findByIngredients(String ingredientList, int number){
+        disposable = service.findRecipeByIngredients(APIKEY, ingredientList, number)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(this::setFindByIngredient, Throwable::printStackTrace);
+    }
+
+
+    public void getQuickSummary(int id){
+        disposable = service.getQuickSummary(APIKEY, id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.single())
+                .subscribe(this::setQuickSummary, Throwable::printStackTrace);
+    }
+
+    private void setQuickSummary(Recipe recipe) {
+        viewProvider.get().showQuickSummary(recipe);
     }
 
 
@@ -72,7 +84,7 @@ public class SpoonacularController {
     }
 
     private void setRecipeInformation(RecipeInformation recipeInformation) {
-        viewProvider.get().setRecipe(recipeInformation);
+        viewProvider.get().showRecipeInformation(recipeInformation);
     }
 
 
