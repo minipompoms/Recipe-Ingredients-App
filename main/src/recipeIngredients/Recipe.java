@@ -8,7 +8,9 @@ public class Recipe {
     private String image;
     private String usedIngredientCount;
     private String missedIngredientCount;
+    private String summary;
 
+    public Recipe(){}
 
     public void setId(int id) {
         this.id = id;
@@ -22,8 +24,8 @@ public class Recipe {
     public void setImage(String image) {
         this.image = image;
     }
+    public void setSummary(String summary) { this.summary = summary; }
 
-    public Recipe(){}
     public int getId() {
         return id;
     }
@@ -55,6 +57,7 @@ public class Recipe {
     public void setMissedIngredientCount(String missedIngredientCount) {
         this.missedIngredientCount = missedIngredientCount;
     }
+    public String getSummary() { return summary; }
     @Override
     public String toString() {
         return "Recipe: " +
