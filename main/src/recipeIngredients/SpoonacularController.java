@@ -44,11 +44,11 @@ public class SpoonacularController {
     }
 
 
-    public void searchRecipe(){
-        disposable = service.searchRecipeList(APIKEY, "burger", 4)
+    public void getRecipesByKeyword(String keyword){
+        disposable = service.searchRecipeList(APIKEY, keyword, 5)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
-                .subscribe(this::setRecipeSearch, Throwable::printStackTrace);
+                .subscribe(this::setKeywordSearch, Throwable::printStackTrace);
     }
 
     public void findByIngredients(String ingredientList){
@@ -70,8 +70,8 @@ public class SpoonacularController {
     }
 
 
-    public void setRecipeSearch(SpoonacularFeed feed){
-        viewProvider.get().showRecipeList(feed);
+    public void setKeywordSearch(SpoonacularFeed feed){
+        viewProvider.get().showRecipesByKeyword(feed);
     }
 
     public void setFindByIngredient(ArrayList<Recipe> feed){
