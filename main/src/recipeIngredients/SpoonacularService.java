@@ -1,24 +1,7 @@
 package recipeIngredients;
 
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import com.sun.tools.javac.util.List;
 import io.reactivex.Observable;
-import jdk.nashorn.internal.ir.RuntimeNode;
-import okhttp3.Cache;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
-import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.*;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 public interface SpoonacularService {
