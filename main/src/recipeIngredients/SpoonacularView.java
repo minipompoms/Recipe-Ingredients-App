@@ -7,20 +7,17 @@ import com.google.inject.Injector;
 
 import javax.inject.Singleton;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
 @Singleton
 
-public class SpoonacularView extends JFrame implements ChangeListener {
+public class SpoonacularView extends JFrame  {
     private JTextArea recipeInfo;
     private JLabel recipeTitle;
     private JLabel foodJoke;
@@ -29,8 +26,8 @@ public class SpoonacularView extends JFrame implements ChangeListener {
     private JTextArea recipeSummary2;
     private int recipeID;
     private JButton searchButton;
-    private DefaultListModel model1 = new DefaultListModel();
-    private DefaultListModel model2 = new DefaultListModel();
+    private DefaultListModel<String> model1 = new DefaultListModel<>();
+    private DefaultListModel<String> model2 = new DefaultListModel<String>();
     private JList<String> recipeList1;
     private JList<String> recipeList2;
     private ArrayList<Integer> recipeIDs = new ArrayList<>();
@@ -38,7 +35,7 @@ public class SpoonacularView extends JFrame implements ChangeListener {
     private String keyword;
     private JTextField keywordField;
     private String summary;
-
+    private String recipeDetails;
 
     @Inject
     public SpoonacularView(SpoonacularController controller) {
@@ -46,14 +43,14 @@ public class SpoonacularView extends JFrame implements ChangeListener {
         setSize(800, 620);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Recipe Box ...");
-        setBackground(Color.gray);
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 controller.stop();
             }
         });
-        ChangeListener changeListener = new ChangeListener() {
+       ChangeListener changeListener = new ChangeListener() {
             public void stateChanged(ChangeEvent event) {
                 JTabbedPane source = (JTabbedPane) event.getSource();
                 int index = source.getSelectedIndex();
@@ -63,6 +60,7 @@ public class SpoonacularView extends JFrame implements ChangeListener {
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addChangeListener(changeListener);
+        tabbedPane.setBackground(Color.red);
         tabbedPane.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
         FlowLayout fl = new FlowLayout(FlowLayout.LEFT, 30, 10);
 
@@ -74,6 +72,7 @@ public class SpoonacularView extends JFrame implements ChangeListener {
         JPanel tab2 = new JPanel(new GridLayout(0, 2));
 
         foodJoke = new JLabel();
+        //controller.getRandomJoke();
 
         keywordField = new JTextField();
         keywordField.setColumns(15);
@@ -84,19 +83,17 @@ public class SpoonacularView extends JFrame implements ChangeListener {
         recipeSummary1.setLineWrap(true);
         recipeSummary1.setColumns(25);
         recipeSummary1.setRows(60);
-        controller.getRandomJoke();
-
-
         recipeList1 = new JList<String>(model1);
         recipeList1.setSelectionMode(SINGLE_SELECTION);
         recipeList1.setLayoutOrientation(JList.VERTICAL);
         recipeList1.addListSelectionListener((ListSelectionEvent e) -> {
-        if(!e.getValueIsAdjusting()){
-            JList changedList = (JList)e.getSource();
-            int index = changedList.getSelectedIndex();
-            recipeID = recipeIDs.get(index);
-            controller.getQuickSummary(recipeID);
-        }
+            if (!e.getValueIsAdjusting()) {
+                JList changedList = (JList) e.getSource();
+                int index = changedList.getSelectedIndex();
+                recipeID = recipeIDs.get(index);
+                controller.getQuickSummary(recipeID);
+                keywordPanel.add(recipeSummary1);
+            }
 
 
         });
@@ -117,8 +114,8 @@ public class SpoonacularView extends JFrame implements ChangeListener {
         recipeList2.setSelectionMode(SINGLE_SELECTION);
         recipeList2.setLayoutOrientation(JList.VERTICAL);
         recipeList2.addListSelectionListener((ListSelectionEvent e) -> {
-            if(!e.getValueIsAdjusting()){
-                JList changedList = (JList)e.getSource();
+            if (!e.getValueIsAdjusting()) {
+                JList changedList = (JList) e.getSource();
                 int index = changedList.getSelectedIndex();
                 recipeID = recipeIDs.get(index);
                 controller.getQuickSummary(recipeID);
@@ -144,7 +141,7 @@ public class SpoonacularView extends JFrame implements ChangeListener {
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         searchButton = new JButton("Search");
-        mainPanel.add(searchButton, BorderLayout.PAGE_END);
+        mainPanel.add(searchButton, BorderLayout.AFTER_LAST_LINE);
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -152,6 +149,7 @@ public class SpoonacularView extends JFrame implements ChangeListener {
                     keyword = keywordField.getText();
                     findRecipesByKeyword(controller, keyword);
                     recipePanel1.add(recipeList1);
+
                 }
 
                 if (mode.equals("2")) {
@@ -167,7 +165,12 @@ public class SpoonacularView extends JFrame implements ChangeListener {
             }
         });
 
+        displayRecipeInfoDialog(controller);
+
         mainPanel.add(tabbedPane, BorderLayout.CENTER);
+        Border border = BorderFactory.createEmptyBorder(20, 10, 20, 10);
+        getRootPane().setBorder(border);
+
         add(mainPanel);
 
     }
@@ -180,20 +183,33 @@ public class SpoonacularView extends JFrame implements ChangeListener {
         controller.findByIngredients(ingredients);
     }
 
-    public void findRecipeInfo(SpoonacularController controller, int recipeID) {
+
+    public void displayRecipeInfoDialog(SpoonacularController controller){
         controller.getRecipeInformation(recipeID);
+
+        recipeList1.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                JList list = (JList)e.getSource();
+                if (e.getClickCount() == 2) {
+                    JOptionPane.showMessageDialog(null, recipeDetails);
+                }
+            }
+
+        });
     }
 
 
-    public void showRecipes(RecipeInformation recipeInformation) {
-        StringBuilder recipeDetails = new StringBuilder();
-        for (int i = 0; i < recipeInformation.getExtendedIngredients().size(); i++) {
-            recipeDetails.append("\t");
-            recipeDetails.append(recipeInformation.getExtendedIngredients().get(i).getOriginalString());
-            recipeDetails.append("\n");
-        }
 
-        recipeInfo.setText(recipeDetails.toString());
+    public void showRecipes(RecipeInformation recipeInformation) {
+        System.out.println(recipeInformation.getTitle());
+
+        StringBuilder recipeBuilder = new StringBuilder();
+        for (int i = 0; i < recipeInformation.getExtendedIngredients().size(); i++) {
+            recipeBuilder.append("\t");
+            recipeBuilder.append(recipeInformation.getExtendedIngredients().get(i).getOriginalString());
+            recipeBuilder.append("\n");
+        }
+        recipeDetails = recipeBuilder.toString();
         recipeTitle.setText(recipeInformation.getTitle());
         recipeID = recipeInformation.getId();
     }
@@ -218,7 +234,13 @@ public class SpoonacularView extends JFrame implements ChangeListener {
 
     public void showQuickSummary(Recipe recipe) {
         summary = recipe.getSummary().replaceAll("<[^>]*>", "");
-        //recipeSummary1.setText(summary);
+        if(mode.equals("1")){
+            recipeSummary1.setText(summary);
+        }
+        if(mode.equals("2")){
+            recipeSummary2.setText(summary);
+        }
+
     }
 
     public void setJoke(SpoonacularFeed feed) {
@@ -226,11 +248,6 @@ public class SpoonacularView extends JFrame implements ChangeListener {
         foodJoke.setText(joke + "...");
     }
 
-
-    @Override
-    public void stateChanged(ChangeEvent e) {
-
-    }
 
 
 
