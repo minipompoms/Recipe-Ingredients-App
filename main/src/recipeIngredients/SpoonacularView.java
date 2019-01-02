@@ -189,7 +189,6 @@ public class SpoonacularView extends JFrame {
 
         recipeList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                JList list = (JList)e.getSource();
                 if (e.getClickCount() == 2) {
                     controller.getRecipeInformation(recipeID);
                     createDialog();
@@ -202,11 +201,11 @@ public class SpoonacularView extends JFrame {
     }
 
     private void createDialog(){
-        JDialog d = new JDialog();
         recipeTitle = new JLabel();
         recipeInfo = new JTextArea();
         recipeInfo.setLineWrap(true);
         recipeInfo.setWrapStyleWord(true);
+        JDialog d = new JDialog();
         d.setSize(700 ,500);
         d.setTitle(recipeTitle.getText());
         d.add(recipeInfo);

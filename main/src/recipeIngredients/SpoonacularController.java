@@ -1,7 +1,6 @@
 package recipeIngredients;
 
 import com.google.inject.Provider;
-import com.sun.tools.javac.util.List;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import com.google.inject.Inject;
