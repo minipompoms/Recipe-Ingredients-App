@@ -1,7 +1,6 @@
 package recipeIngredients;
 
 import com.google.inject.Provider;
-import com.sun.tools.javac.util.List;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import com.google.inject.Inject;
@@ -14,7 +13,7 @@ public class SpoonacularController {
     private SpoonacularService service;
     private Provider<SpoonacularView> viewProvider;
     private Disposable disposable;
-    String APIKEY = "lIQwnxhTt8mshrspQjiOj9uYDVs5p1K8otZjsncetRKjGas2oN";
+    String APIKEY = "bcabf98725mshad190ff2250978ep16925cjsn3d0bb9a60746";
 
     @Inject
     public SpoonacularController(SpoonacularService service, Provider<SpoonacularView> viewProvider) {

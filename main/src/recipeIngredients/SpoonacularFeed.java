@@ -2,8 +2,6 @@ package recipeIngredients;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class SpoonacularFeed extends AbstractModule {
