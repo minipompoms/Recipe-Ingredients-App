@@ -120,7 +120,7 @@ public class SpoonacularView extends JFrame  {
                 recipeID = recipeIDs.get(index);
                 controller.getQuickSummary(recipeID);
                 recipeSummary2.setText(summary);
-                ingredientsPanel.add(recipeSummary1);
+                ingredientsPanel.add(recipeSummary2);
             }
 
 
@@ -165,7 +165,7 @@ public class SpoonacularView extends JFrame  {
             }
         });
 
-        displayRecipeInfoDialog(controller);
+        //displayRecipeInfoDialog(controller);
 
         mainPanel.add(tabbedPane, BorderLayout.CENTER);
         Border border = BorderFactory.createEmptyBorder(20, 10, 20, 10);
