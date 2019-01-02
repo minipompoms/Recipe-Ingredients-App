@@ -10,9 +10,13 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
@@ -30,6 +34,7 @@ public class SpoonacularView extends JFrame {
     private JTextArea recipeSummary2;
     private int recipeID;
     private JButton searchButton;
+    private Map<String, Integer> recipeIDMap = new HashMap<>();
     private DefaultListModel<String> model1 = new DefaultListModel<>();
     private DefaultListModel<String> model2 = new DefaultListModel<>();
     private JList<String> recipeList1;
@@ -96,8 +101,8 @@ public class SpoonacularView extends JFrame {
         recipeList1.addListSelectionListener((ListSelectionEvent e) -> {
             if (!e.getValueIsAdjusting()) {
                 JList changedList = (JList) e.getSource();
-                int index = changedList.getSelectedIndex();
-                recipeID = recipeIDs.get(index);
+                Object item = changedList.getSelectedValue();
+                recipeID = recipeIDMap.get(item.toString());
                 controller.getQuickSummary(recipeID);
                 keywordPanel.add(recipeSummary1);
             }
@@ -122,8 +127,8 @@ public class SpoonacularView extends JFrame {
         recipeList2.addListSelectionListener((ListSelectionEvent e) -> {
             if (!e.getValueIsAdjusting()) {
                 JList changedList = (JList) e.getSource();
-                int index = changedList.getSelectedIndex();
-                recipeID = recipeIDs.get(index);
+                Object item = changedList.getSelectedValue();
+                recipeID = recipeIDMap.get(item.toString());
                 controller.getQuickSummary(recipeID);
                 ingredientSearchPanel.add(recipeSummary2);
             }
@@ -146,6 +151,7 @@ public class SpoonacularView extends JFrame {
                 keyword = keywordField.getText();
                 findRecipesByKeyword(controller, keyword);
                 recipePanel1.add(recipeList1);
+                displayRecipeInfoDialog(controller, recipeList1);
 
             }
 
@@ -155,6 +161,7 @@ public class SpoonacularView extends JFrame {
                     ingredientsBuilder.append(ingredients.get(i)).append(",");
                     findByIngredients(controller, ingredientsBuilder.toString());
                     recipePanel2.add(recipeList2);
+                    displayRecipeInfoDialog(controller, recipeList2);
                 });
 
             }
@@ -167,6 +174,28 @@ public class SpoonacularView extends JFrame {
 
         add(mainPanel);
 
+    }
+
+    private void displayRecipeInfoDialog(SpoonacularController controller, JList<String> recipeList) {
+        recipeList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    controller.getRecipeInformation(recipeID);
+                    createDialog();
+                }}});
+    }
+
+    private void createDialog(){
+        JDialog d = new JDialog();
+        recipeTitle = new JLabel();
+        recipeInfo = new JTextArea();
+        recipeInfo.setLineWrap(true);
+        recipeInfo.setWrapStyleWord(true);
+        d.setSize(700 ,500);
+        d.setTitle(recipeTitle.getText());
+        d.add(recipeInfo);
+        d.setLocationRelativeTo(SpoonacularView.this);
+        d.setVisible(true);
     }
 
     private GridBagConstraints constraint;
@@ -214,7 +243,7 @@ public class SpoonacularView extends JFrame {
                 ingredients.remove(ingredient);
                 updateButtons();
             });
-
+            repaint();
 
         }
     }
@@ -246,7 +275,7 @@ public class SpoonacularView extends JFrame {
         for (int i = 0; i < feed.size(); i++) {
             String recipe = feed.get(i).getTitle() + "\n";
             model2.add(i, recipe);
-            recipeIDs.add(feed.get(i).getId());
+            recipeIDMap.putIfAbsent(recipe, feed.get(i).getId());
         }
     }
 
@@ -254,7 +283,7 @@ public class SpoonacularView extends JFrame {
         for (int i = 0; i < feed.getRecipeList().size(); i++) {
             String recipe = feed.getRecipeList().get(i).getTitle() + "\n";
             model1.add(i, recipe);
-            recipeIDs.add(feed.getRecipeList().get(i).getId());
+            recipeIDMap.putIfAbsent(recipe, feed.getRecipeList().get(i).getId());
 
         }
 
@@ -262,13 +291,13 @@ public class SpoonacularView extends JFrame {
 
     void showQuickSummary(Recipe recipe) {
         summary = recipe.getSummary().replaceAll("<[^>]*>", "");
-        if (mode.equals("1")) {
-            recipeSummary1.setText(summary);
+        String title = "\n" + recipe.getTitle();
+        if (mode.equals("Search for a recipe")) {
+            recipeSummary1.setText(title + "\n" + summary);
         }
-        if (mode.equals("2")) {
-            recipeSummary2.setText(summary);
+        if (mode.equals("Lookup recipes by ingredient")) {
+            recipeSummary2.setText(title + "\n" + summary);
         }
-
     }
 
     void setJoke(SpoonacularFeed feed) {
