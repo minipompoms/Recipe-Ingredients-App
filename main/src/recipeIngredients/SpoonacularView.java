@@ -27,7 +27,6 @@ public class SpoonacularView extends JFrame {
     private JTextArea recipeSummary1;
     private JTextArea recipeSummary2;
     private int recipeID;
-    private JButton searchButton;
     private Map<String, Integer>  recipeIDMap = new HashMap<>();
     private DefaultListModel<String> model1 = new DefaultListModel<String>();
     private DefaultListModel<String> model2 = new DefaultListModel<String>();
@@ -36,7 +35,6 @@ public class SpoonacularView extends JFrame {
     private String mode;
     private String keyword;
     private JTextField keywordField;
-    private String summary;
 
     @Inject
     public SpoonacularView(SpoonacularController controller) {
@@ -51,7 +49,7 @@ public class SpoonacularView extends JFrame {
                 controller.stop();
             }
         });
-       ChangeListener changeListener = new ChangeListener() {
+        ChangeListener changeListener = new ChangeListener() {
             public void stateChanged(ChangeEvent event) {
                 JTabbedPane source = (JTabbedPane) event.getSource();
                 int index = source.getSelectedIndex();
@@ -82,7 +80,7 @@ public class SpoonacularView extends JFrame {
         recipeSummary1.setWrapStyleWord(true);
         recipeSummary1.setLineWrap(true);
         recipeSummary1.setColumns(30);
-        recipeSummary1.setRows(58);
+        recipeSummary1.setRows(55);
         recipeList1 = new JList<String>(model1);
         recipeList1.setSelectionMode(SINGLE_SELECTION);
         recipeList1.setLayoutOrientation(JList.VERTICAL);
@@ -138,7 +136,7 @@ public class SpoonacularView extends JFrame {
 
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        searchButton = new JButton("Search");
+        JButton searchButton = new JButton("Search");
         mainPanel.add(searchButton, BorderLayout.AFTER_LAST_LINE);
         searchButton.addActionListener(new ActionListener() {
             @Override
@@ -171,7 +169,6 @@ public class SpoonacularView extends JFrame {
         mainPanel.add(tabbedPane, BorderLayout.CENTER);
         Border border = BorderFactory.createEmptyBorder(20, 10, 20, 10);
         getRootPane().setBorder(border);
-
         add(mainPanel);
 
     }
@@ -248,13 +245,13 @@ public class SpoonacularView extends JFrame {
     }
 
     public void showQuickSummary(Recipe recipe) {
-        summary = recipe.getSummary().replaceAll("<[^>]*>", "");
+        String summary = recipe.getSummary().replaceAll("<[^>]*>", "");
         String title = "\n"+ recipe.getTitle();
         if(mode.equals("Search for a recipe")){
-            recipeSummary1.setText(title + "\n"+summary);
+            recipeSummary1.setText(title + "\n"+ summary);
         }
         if(mode.equals("Lookup recipes by ingredient")){
-            recipeSummary2.setText(title + "\n"+summary);
+            recipeSummary2.setText(title + "\n"+ summary);
         }
     }
 
