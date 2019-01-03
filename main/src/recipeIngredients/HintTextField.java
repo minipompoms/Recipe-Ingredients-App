@@ -16,7 +16,6 @@ public class HintTextField extends JTextField {
         setText(hint);
         setFont(lostFont);
         setForeground(Color.GRAY);
-        setColumns(25);
 
         this.addFocusListener(new FocusAdapter() {
 
@@ -25,11 +24,11 @@ public class HintTextField extends JTextField {
                 if (getText().equals(hint)) {
                     setText("");
                     setFont(gainFont);
-                    setColumns(25);
+                    setColumns(15);
                 } else {
                     setText(getText());
                     setFont(gainFont);
-                    setColumns(25);
+                    setColumns(15);
 
                 }
             }
@@ -40,13 +39,13 @@ public class HintTextField extends JTextField {
                     setText(hint);
                     setFont(lostFont);
                     setForeground(Color.GRAY);
-                    setColumns(25);
+                    setColumns(15);
 
                 } else {
                     setText(getText());
                     setFont(gainFont);
                     setForeground(Color.BLACK);
-                    setColumns(25);
+                    setColumns(15);
                 }
             }
         });

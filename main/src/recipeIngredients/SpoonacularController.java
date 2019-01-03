@@ -65,17 +65,17 @@ public class SpoonacularController {
 
 
 
-    private void setFindByIngredient(List<Recipe> feed) {
-        viewProvider.get().showFindByIngredient(feed);
-
-    }
-
-
     public void getQuickSummary(int id){
         disposable = service.getQuickSummary(APIKEY, id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(this::setQuickSummary, Throwable::printStackTrace);
+    }
+
+
+    private void setFindByIngredient(List<Recipe> feed) {
+        viewProvider.get().showFindByIngredient(feed);
+
     }
 
     private void setQuickSummary(Recipe recipe) {
@@ -87,9 +87,6 @@ public class SpoonacularController {
         viewProvider.get().showRecipesByKeyword(feed);
     }
 
-    private void setFindByIngredient(ArrayList<Recipe> feed){
-        viewProvider.get().showFindByIngredient(feed);
-    }
 
     private void setRandomJoke(SpoonacularFeed feed){
         viewProvider.get().setJoke(feed);
