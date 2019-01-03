@@ -191,8 +191,9 @@ public class SpoonacularView extends JFrame {
                     ingredientsBuilder.append(ingredients.get(i)).append(",");
                     findByIngredients(controller, ingredientsBuilder.toString());
                     recipePanel2.add(recipeList2);
-                    displayRecipeInfoDialog(controller, recipeList2);
+
                 });
+                displayRecipeInfoDialog(controller, recipeList2);
 
             }
 
