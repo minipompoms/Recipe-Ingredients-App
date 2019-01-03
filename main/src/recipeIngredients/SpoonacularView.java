@@ -4,13 +4,18 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-
+import javax.imageio.ImageIO;
 import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.*;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,10 +28,18 @@ public class SpoonacularView extends JFrame {
     private JTextArea recipeInfo;
     private JLabel recipeTitle;
     private JLabel foodJoke;
-    private JTextField[] ingredientsEntered = new JTextField[5];
+    private ArrayList<String> ingredients = new ArrayList<>();
+    private JTextField ingredientField = new JTextField("Enter an ingredient here.");
     private JTextArea recipeSummary1;
     private JTextArea recipeSummary2;
+    private JLabel recipePic1 = new JLabel();
+    private JLabel recipePic2 = new JLabel();
     private int recipeID;
+
+    private Map<String, Integer> recipeIDMap = new HashMap<>();
+    private DefaultListModel<String> model1 = new DefaultListModel<>();
+    private DefaultListModel<String> model2 = new DefaultListModel<>();
+
     private Map<String, Integer>  recipeIDMap = new HashMap<>();
     private DefaultListModel<String> model1 = new DefaultListModel<String>();
     private DefaultListModel<String> model2 = new DefaultListModel<String>();
@@ -35,9 +48,12 @@ public class SpoonacularView extends JFrame {
     private String mode;
     private String keyword;
     private JTextField keywordField;
+    private JPanel ingredientsPanel;
+  
 
     @Inject
     public SpoonacularView(SpoonacularController controller) {
+        this.controller = controller;
         setLocation(240, 180);
         setSize(1000, 620);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -49,12 +65,11 @@ public class SpoonacularView extends JFrame {
                 controller.stop();
             }
         });
-        ChangeListener changeListener = new ChangeListener() {
-            public void stateChanged(ChangeEvent event) {
-                JTabbedPane source = (JTabbedPane) event.getSource();
-                int index = source.getSelectedIndex();
-                mode = source.getTitleAt(index);
-            }
+      
+        ChangeListener changeListener = event -> {
+            JTabbedPane source = (JTabbedPane) event.getSource();
+            int index = source.getSelectedIndex();
+            mode = source.getTitleAt(index);
         };
 
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -63,15 +78,15 @@ public class SpoonacularView extends JFrame {
         tabbedPane.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
         FlowLayout fl = new FlowLayout(FlowLayout.LEFT, 30, 10);
 
-        JPanel ingredientsPanel = new JPanel(fl);
+        createIngredientPanel();
         JPanel keywordPanel = new JPanel(fl);
         JPanel recipePanel1 = new JPanel(new GridLayout(0, 1));
         JPanel recipePanel2 = new JPanel(new GridLayout(0, 1));
-        JPanel tab1 = new JPanel(new GridLayout(0, 2));
-        JPanel tab2 = new JPanel(new GridLayout(0, 2));
+        JPanel tab1 = new JPanel(new GridLayout(0, 3));
+        JPanel tab2 = new JPanel(new GridLayout(0, 3));
 
         foodJoke = new JLabel();
-        //controller.getRandomJoke();
+        controller.getRandomJoke();
 
         keywordField = new JTextField();
         keywordField.setColumns(15);
@@ -100,20 +115,18 @@ public class SpoonacularView extends JFrame {
         keywordPanel.add(recipeSummary1);
         recipePanel1.add(recipeList1);
         tab1.add(keywordPanel);
+        tab1.add(recipePic1);
         tab1.add(recipePanel1);
 
-        ingredientsPanel.add(new JLabel("  Enter up to 5 ingredients: "));
-        for (int i = 0; i < ingredientsEntered.length; i++) {
-            ingredientsEntered[i] = new JTextField();
-            ingredientsEntered[i].setColumns(25);
-            ingredientsPanel.add(ingredientsEntered[i]);
-        }
+        JPanel recipeSummaryPanel = new JPanel();
+        recipeSummaryPanel.setLayout(new BoxLayout(recipeSummaryPanel, BoxLayout.PAGE_AXIS));
         recipeSummary2 = new JTextArea();
         recipeSummary2.setWrapStyleWord(true);
         recipeSummary2.setLineWrap(true);
-        recipeSummary2.setColumns(30);
+        recipeSummary2.setColumns(25);
         recipeSummary2.setRows(34);
-        recipeList2 = new JList<String>(model2);
+        recipeList2 = new JList<>(model2);
+
         recipeList2.setSelectionMode(SINGLE_SELECTION);
         recipeList2.setLayoutOrientation(JList.VERTICAL);
         recipeList2.addListSelectionListener((ListSelectionEvent e) -> {
@@ -123,12 +136,14 @@ public class SpoonacularView extends JFrame {
                 Object item = changedList.getSelectedValue();
                 recipeID = recipeIDMap.get(item.toString());
                 controller.getQuickSummary(recipeID);
-                ingredientsPanel.add(recipeSummary2);
+                recipeSummaryPanel.add(recipeSummary2);
             }
         });
-        recipePanel2.add(recipeList2);
-        ingredientsPanel.add(recipeSummary2);
+        recipeSummaryPanel.add(recipeSummary2);
+        recipeSummaryPanel.add(recipePic2);
+
         tab2.add(ingredientsPanel);
+        tab2.add(recipeSummaryPanel);
         tab2.add(recipePanel2);
 
         tabbedPane.add("Search for a recipe", tab1);
@@ -136,36 +151,33 @@ public class SpoonacularView extends JFrame {
 
 
         JPanel mainPanel = new JPanel(new BorderLayout());
+
+        mainPanel.setBackground(Color.pink);
+        setBackground(Color.pink);
         JButton searchButton = new JButton("Search");
         mainPanel.add(searchButton, BorderLayout.AFTER_LAST_LINE);
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (mode.equals("Search for a recipe")) {
-                    keyword = keywordField.getText();
-                    findRecipesByKeyword(controller, keyword);
-                    recipePanel1.add(recipeList1);
-                    displayRecipeInfoDialog(controller, recipeList1);
-
-                }
-
-                if (mode.equals("Lookup recipes by ingredient")) {
-                    StringBuilder ingredientsBuilder = new StringBuilder();
-                    for (int i = 0; i < ingredientsEntered.length; i++) {
-                        ingredientsBuilder.append(ingredientsEntered[i].getText()).append(",");
-                        findByIngredients(controller, ingredientsBuilder.toString());
-                        recipePanel2.add(recipeList2);
-                        displayRecipeInfoDialog(controller, recipeList2);
-
-                    }
-
-                }
+        searchButton.addActionListener(e -> {
+            if (mode.equals("Search for a recipe")) {
+                keyword = keywordField.getText();
+                findRecipesByKeyword(controller, keyword);
+                recipePanel1.add(recipeList1);
+                displayRecipeInfoDialog(controller, recipeList1);
 
             }
-        });
 
 
+            if (mode.equals("Lookup recipes by ingredient")) {
+                StringBuilder ingredientsBuilder = new StringBuilder();
+                IntStream.range(0, ingredients.size()).forEach(i -> {
+                    ingredientsBuilder.append(ingredients.get(i)).append(",");
+                    findByIngredients(controller, ingredientsBuilder.toString());
+                    recipePanel2.add(recipeList2);
+                    displayRecipeInfoDialog(controller, recipeList2);
+                });
 
+            }
+
+        mainPanel.add(foodJoke, BorderLayout.NORTH);
         mainPanel.add(tabbedPane, BorderLayout.CENTER);
         Border border = BorderFactory.createEmptyBorder(20, 10, 20, 10);
         getRootPane().setBorder(border);
@@ -173,20 +185,84 @@ public class SpoonacularView extends JFrame {
 
     }
 
-    public void findRecipesByKeyword(SpoonacularController controller, String keyword) {
+    private GridBagConstraints constraint;
+
+    private void createIngredientPanel() {
+
+        ingredientsPanel = new JPanel(new GridBagLayout());
+        constraint = new GridBagConstraints();
+        constraint.gridx = 0;
+        constraint.gridy = 0;
+        constraint.fill = GridBagConstraints.BOTH;
+        constraint.insets = new Insets(3, 2, 3, 2);
+        ingredientsPanel.add(ingredientField, constraint);
+        JButton addIngredient = new JButton("Add");
+        addIngredient.addActionListener(addEvent ->
+        {
+            if (ingredients.size() < 5) {
+                int placeToPut;
+                if (ingredients.size() == 0) {
+                    placeToPut = 0;
+                } else {
+                    placeToPut = ingredients.size();
+                }
+                ingredients.add(placeToPut, ingredientField.getText());
+                ingredientLabels.add(placeToPut, new JLabel(ingredientField.getText()));
+                removeButtons.add(placeToPut, new JButton("Remove"));
+                removeButtons.get(removeButtons.size() - 1).addActionListener(this::updateButtonsandLabels);
+                constraint.gridx = 0;
+                constraint.gridy = 3 + ingredientLabels.size() - 1;
+                ingredientsPanel.add(ingredientLabels.get(ingredientLabels.size() - 1), constraint);
+                constraint.gridx = 1;
+                ingredientsPanel.add(removeButtons.get(removeButtons.size() - 1), constraint);
+                repaint();
+            }
+        });
+        constraint.gridx = 1;
+        constraint.gridy = 0;
+        ingredientsPanel.add(addIngredient, constraint);
+
+
+    }
+
+    private ArrayList<JLabel> ingredientLabels = new ArrayList<>();
+    private ArrayList<JButton> removeButtons = new ArrayList<>();
+
+    private void updateButtonsandLabels(ActionEvent event) {
+        JButton source = (JButton) event.getSource();
+        int index = removeButtons.indexOf(source);
+        ingredientsPanel.remove(source);
+        ingredientsPanel.remove(ingredientLabels.get(index));
+        ingredients.remove(index);
+        ingredientLabels.remove(index);
+        removeButtons.remove(index);
+        repaint();
+        for (int x = index; x < ingredients.size(); x++) {
+            constraint.gridx = 0;
+            constraint.gridy = x + 3;
+            JLabel currentLabel = ingredientLabels.get(x);
+            ingredientsPanel.remove(currentLabel);
+            ingredientsPanel.add(currentLabel, constraint);
+            constraint.gridx = 1;
+            ingredientsPanel.remove(removeButtons.get(x));
+            ingredientsPanel.add(removeButtons.get(x), constraint);
+            repaint();
+        }
+
+    }
+
+    private void findRecipesByKeyword(SpoonacularController controller, String keyword) {
         controller.getRecipesByKeyword(keyword);
     }
 
-    public void findByIngredients(SpoonacularController controller, String ingredients) {
+    private void findByIngredients(SpoonacularController controller, String ingredients) {
         controller.findByIngredients(ingredients);
     }
 
 
-    public void displayRecipeInfoDialog(SpoonacularController controller, JList recipeList){
-
+    private void displayRecipeInfoDialog(SpoonacularController controller, JList recipeList) {
         recipeList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                JList list = (JList)e.getSource();
                 if (e.getClickCount() == 2) {
                     controller.getRecipeInformation(recipeID);
                     createDialog();
@@ -198,13 +274,14 @@ public class SpoonacularView extends JFrame {
 
     }
 
+
     private void createDialog(){
         JDialog d = new JDialog();
         recipeTitle = new JLabel();
         recipeInfo = new JTextArea();
         recipeInfo.setLineWrap(true);
         recipeInfo.setWrapStyleWord(true);
-        d.setSize(700 ,500);
+        d.setSize(700, 500);
         d.setTitle(recipeTitle.getText());
         d.add(recipeInfo);
         d.setLocationRelativeTo(SpoonacularView.this);
@@ -213,7 +290,6 @@ public class SpoonacularView extends JFrame {
 
 
     public void showRecipes(RecipeInformation recipeInformation) {
-
         StringBuilder recipeBuilder = new StringBuilder();
         recipeBuilder.append("\t").append(recipeInformation.getTitle()).append("\n\n");
         for (int i = 0; i < recipeInformation.getExtendedIngredients().size(); i++) {
@@ -227,6 +303,7 @@ public class SpoonacularView extends JFrame {
     }
 
 
+
     public void showFindByIngredient(ArrayList<Recipe> feed) {
         for (int i = 0; i < feed.size(); i++) {
             String recipe = " "+feed.get(i).getTitle() + "\n";
@@ -235,8 +312,9 @@ public class SpoonacularView extends JFrame {
         }
     }
 
-    public void showRecipesByKeyword(SpoonacularFeed feed) {
+    void showRecipesByKeyword(SpoonacularFeed feed) {
         for (int i = 0; i < feed.getRecipeList().size(); i++) {
+
             String recipe = " "+ feed.getRecipeList().get(i).getTitle() + "\n";
             model1.add(i, recipe);
             recipeIDMap.putIfAbsent(recipe, feed.getRecipeList().get(i).getId());
@@ -244,23 +322,24 @@ public class SpoonacularView extends JFrame {
 
     }
 
-    public void showQuickSummary(Recipe recipe) {
+    void showQuickSummary(Recipe recipe) {
         String summary = recipe.getSummary().replaceAll("<[^>]*>", "");
-        String title = "\n"+ recipe.getTitle();
-        if(mode.equals("Search for a recipe")){
-            recipeSummary1.setText(title + "\n"+ summary);
+        String title = "\n" + recipe.getTitle();
+
+        if (mode.equals("Search for a recipe")) {
+            recipeSummary1.setText(title + "\n" + summary);
+            //controller.getRecipeImage(recipe.getId(), 1);
         }
-        if(mode.equals("Lookup recipes by ingredient")){
-            recipeSummary2.setText(title + "\n"+ summary);
+        if (mode.equals("Lookup recipes by ingredient")) {
+            recipeSummary2.setText(title + "\n" + summary);
+            //controller.getRecipeImage(recipe.getId(), 2);
         }
     }
 
-    public void setJoke(SpoonacularFeed feed) {
+    void setJoke(SpoonacularFeed feed) {
         String joke = feed.getJoke();
-        foodJoke.setText(joke + "...");
+        foodJoke.setText("Here's a joke to make you smile! " + joke + "...");
     }
-
-
 
 
     public static void main(String[] args) {
@@ -268,5 +347,26 @@ public class SpoonacularView extends JFrame {
         SpoonacularView view = injector.getInstance(SpoonacularView.class);
         view.setVisible(true);
 
+    }
+
+    void setImage(String imageString, int numTab) throws IOException {
+        ImageIcon imageIcon;
+        BufferedImage image;
+        if (!imageString.isEmpty()) {
+            System.setProperty("http.agent", "Chrome");
+            image = ImageIO.read(new URL(imageString));
+            imageIcon = new ImageIcon(image.getScaledInstance(300,250,Image.SCALE_DEFAULT));
+
+        } else {
+            imageIcon = new ImageIcon(ImageIO.read(new File("no image.png")).
+                    getScaledInstance(300,250,Image.SCALE_DEFAULT));
+        }
+
+        if (numTab == 1) {
+            recipePic1.setIcon(imageIcon);
+        }
+        if (numTab == 2) {
+            recipePic2.setIcon(imageIcon);
+        }
     }
 }
