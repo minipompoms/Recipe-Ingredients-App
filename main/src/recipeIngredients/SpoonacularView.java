@@ -45,6 +45,7 @@ public class SpoonacularView extends JFrame {
     private JTextField keywordField;
     private JPanel ingredientsPanel;
     private SpoonacularController controller;
+    JScrollPane summaryScroll = new JScrollPane();
 
     @Inject
     public SpoonacularView(SpoonacularController controller) {
@@ -113,14 +114,13 @@ public class SpoonacularView extends JFrame {
 
         JPanel recipeSummaryPanel = new JPanel();
         recipeSummaryPanel.setLayout(new BoxLayout(recipeSummaryPanel, BoxLayout.PAGE_AXIS));
-        recipeSummary2 = new JTextArea();
+        recipeSummary2 = new JTextArea(22, 15);
         recipeSummary2.setWrapStyleWord(true);
         recipeSummary2.setLineWrap(true);
-        recipeSummary2.setColumns(25);
-        recipeSummary2.setRows(34);
         recipeList2 = new JList<>(model2);
         recipeList2.setSelectionMode(SINGLE_SELECTION);
         recipeList2.setLayoutOrientation(JList.VERTICAL);
+
         recipeList2.addListSelectionListener((ListSelectionEvent e) -> {
 
             if (!e.getValueIsAdjusting()) {
@@ -128,11 +128,16 @@ public class SpoonacularView extends JFrame {
                 Object item = changedList.getSelectedValue();
                 recipeID = recipeIDMap.get(item.toString());
                 controller.getQuickSummary(recipeID);
-                recipeSummaryPanel.add(recipeSummary2);
+                summaryScroll.setViewportView(recipeSummary2);
+                recipeSummaryPanel.add(recipePic2);
+                recipeSummaryPanel.add(summaryScroll);
+
             }
         });
-        recipeSummaryPanel.add(recipeSummary2);
+        summaryScroll.setViewportView(recipeSummary2);
         recipeSummaryPanel.add(recipePic2);
+        recipeSummaryPanel.add(summaryScroll);
+
         tab2.add(ingredientsPanel);
         tab2.add(recipeSummaryPanel);
         tab2.add(recipePanel2);
@@ -345,11 +350,11 @@ public class SpoonacularView extends JFrame {
         if (!imageString.isEmpty()) {
             System.setProperty("http.agent", "Chrome");
             image = ImageIO.read(new URL(imageString));
-            imageIcon = new ImageIcon(image.getScaledInstance(300,250,Image.SCALE_DEFAULT));
+            imageIcon = new ImageIcon(image.getScaledInstance(300, 250, Image.SCALE_DEFAULT));
 
         } else {
             imageIcon = new ImageIcon(ImageIO.read(new File("no image.png")).
-                    getScaledInstance(300,250,Image.SCALE_DEFAULT));
+                    getScaledInstance(300, 250, Image.SCALE_DEFAULT));
         }
 
         if (numTab == 1) {
