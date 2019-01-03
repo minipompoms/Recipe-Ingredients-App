@@ -114,13 +114,14 @@ public class SpoonacularView extends JFrame {
 
         JPanel recipeSummaryPanel = new JPanel();
         recipeSummaryPanel.setLayout(new BoxLayout(recipeSummaryPanel, BoxLayout.PAGE_AXIS));
-        recipeSummary2 = new JTextArea(22, 15);
+        recipeSummary2 = new JTextArea();
         recipeSummary2.setWrapStyleWord(true);
         recipeSummary2.setLineWrap(true);
+        recipeSummary2.setColumns(25);
+        recipeSummary2.setRows(34);
         recipeList2 = new JList<>(model2);
         recipeList2.setSelectionMode(SINGLE_SELECTION);
         recipeList2.setLayoutOrientation(JList.VERTICAL);
-
         recipeList2.addListSelectionListener((ListSelectionEvent e) -> {
 
             if (!e.getValueIsAdjusting()) {
@@ -257,7 +258,6 @@ public class SpoonacularView extends JFrame {
 
 
     private void displayRecipeInfoDialog(SpoonacularController controller, JList recipeList) {
-
         recipeList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
