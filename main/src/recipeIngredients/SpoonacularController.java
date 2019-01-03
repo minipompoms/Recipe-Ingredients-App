@@ -1,18 +1,13 @@
 package recipeIngredients;
 
+import com.google.inject.Inject;
 import com.google.inject.Provider;
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import com.google.inject.Inject;
 
 import javax.inject.Singleton;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Singleton
 public class SpoonacularController {
@@ -27,14 +22,14 @@ public class SpoonacularController {
         this.service = service;
     }
 
-    public void getNutrients(int id){
+    public void getNutrients(int id) {
         disposable = service.getRecipeDetails(APIKEY, id, true)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(this::setRecipeInformation, Throwable::printStackTrace);
     }
 
-    public void getRandomJoke(){
+    public void getRandomJoke() {
         disposable = service.getFoodJoke(APIKEY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
@@ -49,23 +44,22 @@ public class SpoonacularController {
     }
 
 
-    public void getRecipesByKeyword(String keyword){
+    public void getRecipesByKeyword(String keyword) {
         disposable = service.searchRecipeList(APIKEY, keyword, 5)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(this::setKeywordSearch, Throwable::printStackTrace);
     }
 
-    public void findByIngredients(String ingredientList){
-        disposable  = service.findRecipeByIngredients(APIKEY, ingredientList, 5)
+    public void findByIngredients(String ingredientList) {
+        disposable = service.findRecipeByIngredients(APIKEY, ingredientList, 5)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
                 .subscribe(this::setFindByIngredient, Throwable::printStackTrace);
     }
 
 
-
-    public void getQuickSummary(int id){
+    public void getQuickSummary(int id) {
         disposable = service.getQuickSummary(APIKEY, id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
@@ -94,12 +88,12 @@ public class SpoonacularController {
     }
 
 
-    private void setKeywordSearch(SpoonacularFeed feed){
+    private void setKeywordSearch(SpoonacularFeed feed) {
         viewProvider.get().showRecipesByKeyword(feed);
     }
 
 
-    private void setRandomJoke(SpoonacularFeed feed){
+    private void setRandomJoke(SpoonacularFeed feed) {
         viewProvider.get().setJoke(feed);
     }
 

@@ -276,6 +276,8 @@ public class SpoonacularView extends JFrame {
     }
 
 
+
+
     private void displayRecipeInfoDialog(SpoonacularController controller, JList recipeList) {
 
         recipeList.addMouseListener(new MouseAdapter() {
@@ -374,7 +376,6 @@ public class SpoonacularView extends JFrame {
             recipePic2.setIcon(imageIcon);
         }
     }
-
 
     public static void main(String[] args) {
         Injector injector = Guice.createInjector(new SpoonacularModule());
