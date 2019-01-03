@@ -1,25 +1,19 @@
 package recipeIngredients;
 
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-
+import com.google.inject.*;
 import javax.imageio.ImageIO;
 import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.IntStream;
 
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
@@ -82,8 +76,8 @@ public class SpoonacularView extends JFrame {
         mainIngredientsPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 0, 10));
         JPanel recipePanel1 = new JPanel(new GridLayout(0, 1));
         JPanel recipePanel2 = new JPanel(new GridLayout(0, 1));
-        recipePanel1.setBorder(BorderFactory.createEmptyBorder(68, 10, 15, 26));
-        recipePanel2.setBorder(BorderFactory.createEmptyBorder(30, 16, 20, 26));
+        recipePanel1.setBorder(BorderFactory.createEmptyBorder(40, 10, 15, 26));
+        recipePanel2.setBorder(BorderFactory.createEmptyBorder(30, 16, 15, 26));
 
         JPanel tab1 = new JPanel(new GridLayout(0, 3));
         JPanel tab2 = new JPanel(new GridLayout(0, 3));
@@ -93,7 +87,6 @@ public class SpoonacularView extends JFrame {
 
         keywordField = new JTextField();
         keywordField.setColumns(15);
-
         keywordPanel.add(new JLabel("Search for..."));
         keywordPanel.add(keywordField);
         recipeSummary1 = new JTextArea();
@@ -234,6 +227,7 @@ public class SpoonacularView extends JFrame {
                 ingredientsPanel.add(removeButtons.get(removeButtons.size() - 1), constraint);
                 repaint();
             }
+                ingredientField.setText("");
         });
         constraint.gridx = 1;
         constraint.gridy = 0;
