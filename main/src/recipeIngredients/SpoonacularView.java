@@ -100,6 +100,7 @@ public class SpoonacularView extends JFrame {
         recipeSummary1.setLineWrap(true);
         recipeSummary1.setColumns(22);
         recipeSummary1.setRows(21);
+        recipeSummary1.setEditable(false);
         JScrollPane scrollPane1 = new JScrollPane(recipeSummary1);
         scrollPane1.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -133,6 +134,7 @@ public class SpoonacularView extends JFrame {
         recipeSummary2.setLineWrap(true);
         recipeSummary2.setColumns(19);
         recipeSummary2.setRows(7);
+        recipeSummary2.setEditable(false);
         JScrollPane scrollPane2 = new JScrollPane(recipeSummary2);
 
         recipeList2 = new JList<>(model2);
@@ -295,6 +297,7 @@ public class SpoonacularView extends JFrame {
         recipeInfo = new JTextArea();
         recipeInfo.setLineWrap(true);
         recipeInfo.setWrapStyleWord(true);
+        recipeInfo.setEditable(false);
         d.setSize(700, 500);
         d.setTitle(recipeTitle.getText());
         d.add(recipeInfo);
