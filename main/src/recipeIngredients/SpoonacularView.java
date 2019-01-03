@@ -10,10 +10,7 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -183,39 +180,55 @@ public class SpoonacularView extends JFrame {
         addIngredient.addActionListener(addEvent ->
         {
             if (ingredients.size() < 5) {
-                ingredients.add(ingredientField.getText());
-                updateButtons();
+                int placeToPut;
+                if (ingredients.size() == 0) {
+                    placeToPut = 0;
+                } else {
+                    placeToPut = ingredients.size();
+                }
+                ingredients.add(placeToPut, ingredientField.getText());
+                ingredientLabels.add(placeToPut, new JLabel(ingredientField.getText()));
+                removeButtons.add(placeToPut, new JButton("Remove"));
+                removeButtons.get(removeButtons.size() - 1).addActionListener(this::updateButtonsandLabels);
+                constraint.gridx = 0;
+                constraint.gridy = 3 + ingredientLabels.size() - 1;
+                ingredientsPanel.add(ingredientLabels.get(ingredientLabels.size() - 1), constraint);
+                constraint.gridx = 1;
+                ingredientsPanel.add(removeButtons.get(removeButtons.size() - 1), constraint);
+                repaint();
             }
         });
         constraint.gridx = 1;
+        constraint.gridy = 0;
         ingredientsPanel.add(addIngredient, constraint);
 
 
     }
 
-//    ArrayList<JLabel> ingredientLabels = new ArrayList<>();
-    //  ArrayList<JButton> removeButtons = new ArrayList<>();
+    private ArrayList<JLabel> ingredientLabels = new ArrayList<>();
+    private ArrayList<JButton> removeButtons = new ArrayList<>();
 
-    private void updateButtons() {
-        constraint.gridx = 0;
-        constraint.gridy = 3;
+    private void updateButtonsandLabels(ActionEvent event) {
+        JButton source = (JButton) event.getSource();
+        int index = removeButtons.indexOf(source);
+        ingredientsPanel.remove(source);
+        ingredientsPanel.remove(ingredientLabels.get(index));
+        ingredients.remove(index);
+        ingredientLabels.remove(index);
+        removeButtons.remove(index);
 
-        for (String ingredient : ingredients) {
-            JLabel current = new JLabel(ingredient);
-            JButton removeCurrent = new JButton("Remove");
-            ingredientsPanel.add(current, constraint);
-            constraint.gridx = 1;
-            ingredientsPanel.add(removeCurrent, constraint);
+        for(int x = index; x < ingredients.size(); x++) {
             constraint.gridx = 0;
-            constraint.gridy++;
-            removeCurrent.addActionListener(removalEvent ->
-            {
-                ingredients.remove(ingredient);
-                updateButtons();
-            });
+            constraint.gridy = x + 3;
+            JLabel currentLabel = ingredientLabels.get(x);
+            ingredientsPanel.remove(currentLabel);
+            ingredientsPanel.add(currentLabel, constraint);
+            constraint.gridx = 1;
+            ingredientsPanel.remove(removeButtons.get(x));
+            ingredientsPanel.add(removeButtons.get(x), constraint);
             repaint();
-
         }
+
     }
 
     private void findRecipesByKeyword(SpoonacularController controller, String keyword) {
