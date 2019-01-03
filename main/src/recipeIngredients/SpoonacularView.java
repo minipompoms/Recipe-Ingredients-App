@@ -164,13 +164,14 @@ public class SpoonacularView extends JFrame {
         mainPanel.setBackground(new Color(0x9F1E2C));
         setBackground(new Color(0x9F1E2C));
         JButton searchButton = new JButton("Search");
+        JPanel menuPanel = new JPanel(new BorderLayout());
+        menuPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 10));
+        menuPanel.setBackground(new Color(0x9F1E2C));
         searchButton.setOpaque(true);
         searchButton.setBorderPainted(false);
         searchButton.setBackground(Color.black);
         searchButton.setForeground(Color.white);
-        searchButton.setPreferredSize(new Dimension(50,30));
-        mainPanel.add(new JLabel("    "), BorderLayout.AFTER_LINE_ENDS);
-        mainPanel.add(searchButton, BorderLayout.PAGE_END);
+        menuPanel.add(searchButton, BorderLayout.EAST);
         searchButton.addActionListener(e -> {
             if (mode.equals("Search for a recipe")) {
                 keyword = keywordField.getText();
@@ -192,7 +193,7 @@ public class SpoonacularView extends JFrame {
             }
 
         });
-
+        mainPanel.add(menuPanel, BorderLayout.SOUTH);
         mainPanel.add(foodJoke, BorderLayout.NORTH);
         mainPanel.add(tabbedPane, BorderLayout.CENTER);
         Border border = BorderFactory.createEmptyBorder(20, 10, 20, 10);
