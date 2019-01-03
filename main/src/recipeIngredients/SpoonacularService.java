@@ -3,6 +3,7 @@ package recipeIngredients;
 import io.reactivex.Observable;
 import retrofit2.http.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public interface SpoonacularService {
 
@@ -24,7 +25,7 @@ public interface SpoonacularService {
 
 
     @GET("recipes/findByIngredients")
-    Observable<ArrayList<Recipe>>findRecipeByIngredients(
+    Observable<List<Recipe>>findRecipeByIngredients(
             @Header("X-RapidAPI-Key") String RapidAPIKey,
             @Query("ingredients") String ingredients,
             @Query("number") int number);
