@@ -72,6 +72,17 @@ public class SpoonacularController {
                 .subscribe(this::setQuickSummary, Throwable::printStackTrace);
     }
 
+    public void getRecipeImage(int id, int numTab) {
+        disposable = service.getRecipeDetails(APIKEY, id, true)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.single())
+                .subscribe(recipeInformation -> setRecipeImage(recipeInformation, numTab), Throwable::printStackTrace);
+    }
+
+    public void setRecipeImage(RecipeInformation recipeInformation, int numTab) throws IOException {
+        viewProvider.get().setImage(recipeInformation.getImage(), numTab);
+    }
+
 
     private void setFindByIngredient(List<Recipe> feed) {
         viewProvider.get().showFindByIngredient(feed);

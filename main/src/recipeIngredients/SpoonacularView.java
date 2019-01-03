@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 import java.awt.event.*;
@@ -34,10 +35,11 @@ public class SpoonacularView extends JFrame {
     private JLabel recipeTitle;
     private JLabel foodJoke;
     private ArrayList<String> ingredients = new ArrayList<>();
-    private JTextField ingredientField =  new HintTextField("apple");
+    private JTextField ingredientField = new HintTextField("apple");
     private JTextArea recipeSummary1;
     private JTextArea recipeSummary2;
     private int recipeID;
+    private int numTab;
     private Map<String, Integer> recipeIDMap = new HashMap<>();
     private DefaultListModel<String> model1 = new DefaultListModel<>();
     private DefaultListModel<String> model2 = new DefaultListModel<>();
@@ -50,14 +52,17 @@ public class SpoonacularView extends JFrame {
     private GridBagConstraints constraint;
     private ArrayList<JLabel> ingredientLabels = new ArrayList<>();
     private ArrayList<JButton> removeButtons = new ArrayList<>();
-
+    private JLabel recipePic1 = new JLabel();
+    private JLabel recipePic2 = new JLabel();
+    private SpoonacularController controller;
 
     @Inject
     public SpoonacularView(SpoonacularController controller) {
+        this.controller = controller;
         setLocation(240, 180);
         setSize(1000, 620);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("Recipe Box ...");
+        setTitle("Recipe Box");
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -95,13 +100,16 @@ public class SpoonacularView extends JFrame {
         keywordField = new JTextField();
         keywordField.setColumns(15);
 
+        keywordPanel.add(new JLabel("Search for..."));
+        keywordPanel.add(keywordField);
         recipeSummary1 = new JTextArea();
         recipeSummary1.setWrapStyleWord(true);
         recipeSummary1.setLineWrap(true);
-        recipeSummary1.setColumns(25);
+        recipeSummary1.setColumns(22);
         recipeSummary1.setRows(21);
-        JScrollPane scrollPane1 = new JScrollPane(recipeSummary1, VERTICAL_SCROLLBAR_ALWAYS,
-                HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scrollPane1 = new JScrollPane(recipeSummary1);
+        scrollPane1.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         recipeList1 = new JList<>(model1);
         recipeList1.setSelectionMode(SINGLE_SELECTION);
         recipeList1.setLayoutOrientation(JList.VERTICAL);
@@ -116,12 +124,13 @@ public class SpoonacularView extends JFrame {
 
 
         });
-        keywordPanel.add(new JLabel("Search for..."));
-        keywordPanel.add(keywordField);
+
         keywordPanel.add(scrollPane1);
         recipePanel1.add(recipeList1);
         tab1.add(keywordPanel);
         tab1.add(recipePanel1);
+
+        tab1.add(recipePic1);
 
         JPanel recipeSummaryPanel = new JPanel();
         recipeSummaryPanel.setLayout(new BoxLayout(recipeSummaryPanel, BoxLayout.PAGE_AXIS));
@@ -173,12 +182,12 @@ public class SpoonacularView extends JFrame {
         searchButton.setForeground(Color.white);
         menuPanel.add(searchButton, BorderLayout.EAST);
         searchButton.addActionListener(e -> {
+
             if (mode.equals("Search for a recipe")) {
                 keyword = keywordField.getText();
                 findRecipesByKeyword(controller, keyword);
                 recipePanel1.add(recipeList1);
                 displayRecipeInfoDialog(controller, recipeList1);
-
             }
 
             if (mode.equals("Lookup recipes by ingredient")) {
@@ -266,11 +275,14 @@ public class SpoonacularView extends JFrame {
 
     private void findRecipesByKeyword(SpoonacularController controller, String keyword) {
         controller.getRecipesByKeyword(keyword);
+
     }
 
     private void findByIngredients(SpoonacularController controller, String ingredients) {
         controller.findByIngredients(ingredients);
     }
+
+
 
 
     private void displayRecipeInfoDialog(SpoonacularController controller, JList recipeList) {
@@ -335,10 +347,16 @@ public class SpoonacularView extends JFrame {
         String summary = recipe.getSummary().replaceAll("<[^>]*>", "");
         String title = "\n" + recipe.getTitle();
         if (mode.equals("Search for a recipe")) {
+            numTab = 1;
             recipeSummary1.setText(title + "\n\n" + summary);
+            controller.getRecipeImage(recipe.getId(), 1);
+
         }
         if (mode.equals("Lookup recipes by ingredient")) {
+            numTab = 2;
             recipeSummary2.setText(title + "\n\n" + summary);
+            controller.getRecipeImage(recipe.getId(), 2);
+
         }
     }
 
@@ -346,6 +364,30 @@ public class SpoonacularView extends JFrame {
         String joke = feed.getJoke();
         foodJoke.setText("Here's a joke to make you smile! " + joke + "...");
     }
+
+    void setImage(String imageString, int numTab) throws IOException {
+        ImageIcon imageIcon;
+        BufferedImage image;
+        if (!imageString.isEmpty()) {
+            System.setProperty("http.agent", "Chrome");
+            image = ImageIO.read(new URL(imageString));
+            imageIcon = new ImageIcon(image.getScaledInstance(300, 250, Image.SCALE_DEFAULT));
+
+        } else {
+            imageIcon = new ImageIcon(ImageIO.read(new File("no image.png")).
+                    getScaledInstance(300, 250, Image.SCALE_DEFAULT));
+        }
+
+        if (numTab == 1) {
+            recipePic1.setIcon(imageIcon);
+        }
+        if (numTab == 2) {
+            recipePic2.setIcon(imageIcon);
+        }
+    }
+
+
+
 
 
     public static void main(String[] args) {
