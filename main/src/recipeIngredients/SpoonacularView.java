@@ -1,19 +1,25 @@
 package recipeIngredients;
 
-import com.google.inject.*;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 import javax.imageio.ImageIO;
 import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.*;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
@@ -227,7 +233,7 @@ public class SpoonacularView extends JFrame {
                 ingredientsPanel.add(removeButtons.get(removeButtons.size() - 1), constraint);
                 repaint();
             }
-                ingredientField.setText("");
+            ingredientField.setText("");
         });
         constraint.gridx = 1;
         constraint.gridy = 0;
@@ -268,8 +274,6 @@ public class SpoonacularView extends JFrame {
     private void findByIngredients(SpoonacularController controller, String ingredients) {
         controller.findByIngredients(ingredients);
     }
-
-
 
 
     private void displayRecipeInfoDialog(SpoonacularController controller, JList recipeList) {
@@ -350,24 +354,28 @@ public class SpoonacularView extends JFrame {
         foodJoke.setText("Here's a joke to make you smile! " + joke + "...");
     }
 
-    void setImage(String imageString, int numTab) throws IOException {
+    void setImage(String imageString, int numTab) {
         ImageIcon imageIcon;
         BufferedImage image;
-        if (!imageString.isEmpty()) {
-            System.setProperty("http.agent", "Chrome");
-            image = ImageIO.read(new URL(imageString));
-            imageIcon = new ImageIcon(image.getScaledInstance(300, 250, Image.SCALE_DEFAULT));
+        try {
+            if (!imageString.isEmpty()) {
+                System.setProperty("http.agent", "Chrome");
+                image = ImageIO.read(new URL(imageString));
+                imageIcon = new ImageIcon(image.getScaledInstance(300, 250, Image.SCALE_DEFAULT));
 
-        } else {
-            imageIcon = new ImageIcon(ImageIO.read(new File("no image.png")).
-                    getScaledInstance(300, 250, Image.SCALE_DEFAULT));
-        }
+            } else {
+                imageIcon = new ImageIcon(ImageIO.read(new File("no image.png")).
+                        getScaledInstance(300, 250, Image.SCALE_DEFAULT));
+            }
 
-        if (numTab == 1) {
-            recipePic1.setIcon(imageIcon);
-        }
-        if (numTab == 2) {
-            recipePic2.setIcon(imageIcon);
+            if (numTab == 1) {
+                recipePic1.setIcon(imageIcon);
+            }
+            if (numTab == 2) {
+                recipePic2.setIcon(imageIcon);
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 

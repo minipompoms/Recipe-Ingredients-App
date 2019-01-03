@@ -6,7 +6,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import javax.inject.Singleton;
-import java.io.IOException;
 import java.util.List;
 
 @Singleton
@@ -73,10 +72,9 @@ public class SpoonacularController {
                 .subscribe(recipeInformation -> setRecipeImage(recipeInformation, numTab), Throwable::printStackTrace);
     }
 
-    public void setRecipeImage(RecipeInformation recipeInformation, int numTab) throws IOException {
+    public void setRecipeImage(RecipeInformation recipeInformation, int numTab) {
         viewProvider.get().setImage(recipeInformation.getImage(), numTab);
     }
-
 
     private void setFindByIngredient(List<Recipe> feed) {
         viewProvider.get().showFindByIngredient(feed);
