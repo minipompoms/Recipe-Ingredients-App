@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
+// set up UI look & feel
 
 @Singleton
 public class SpoonacularView extends JFrame {
@@ -35,9 +36,9 @@ public class SpoonacularView extends JFrame {
     private JTextArea recipeSummary2;
     private int recipeID;
     private Map<String, Integer> recipeIDMap = new HashMap<>();
-    private DefaultListModel<String> model1 = new DefaultListModel<>();
+    private DefaultListModel model1 = new DefaultListModel<>();
     private DefaultListModel<String> model2 = new DefaultListModel<>();
-    private JList<String> recipeList1;
+    private JList recipeList1;
     private JList<String> recipeList2;
     private String mode;
     private String keyword;
@@ -79,11 +80,12 @@ public class SpoonacularView extends JFrame {
         createIngredientPanel();
         JPanel keywordPanel = new JPanel(fl);
         JPanel mainIngredientsPanel = new JPanel();
-        mainIngredientsPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 0, 10));
+        mainIngredientsPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 60, 10));
         JPanel recipePanel1 = new JPanel(new GridLayout(0, 1));
         JPanel recipePanel2 = new JPanel(new GridLayout(0, 1));
         recipePanel1.setBorder(BorderFactory.createEmptyBorder(40, 10, 15, 26));
-        recipePanel2.setBorder(BorderFactory.createEmptyBorder(30, 16, 15, 26));
+        recipePanel2.setBorder(BorderFactory.createEmptyBorder(30, 16, 20, 26));
+
 
         JPanel tab1 = new JPanel(new GridLayout(0, 3));
         JPanel tab2 = new JPanel(new GridLayout(0, 3));
@@ -96,6 +98,7 @@ public class SpoonacularView extends JFrame {
         keywordPanel.add(new JLabel("Search for..."));
         keywordPanel.add(keywordField);
         recipeSummary1 = new JTextArea();
+        recipeSummary1.setEditable(false);
         recipeSummary1.setWrapStyleWord(true);
         recipeSummary1.setLineWrap(true);
         recipeSummary1.setColumns(22);
@@ -109,6 +112,7 @@ public class SpoonacularView extends JFrame {
         recipeList1.setLayoutOrientation(JList.VERTICAL);
         recipeList1.addListSelectionListener((ListSelectionEvent e) -> {
             if (!e.getValueIsAdjusting()) {
+
                 JList changedList = (JList) e.getSource();
                 Object item = changedList.getSelectedValue();
                 recipeID = recipeIDMap.get(item.toString());
@@ -128,15 +132,18 @@ public class SpoonacularView extends JFrame {
 
         JPanel recipeSummaryPanel = new JPanel();
         recipeSummaryPanel.setLayout(new BoxLayout(recipeSummaryPanel, BoxLayout.PAGE_AXIS));
-        recipeSummaryPanel.setBorder(BorderFactory.createEmptyBorder(20, 15, 20, 15));
+        recipeSummaryPanel.setBorder(BorderFactory.createEmptyBorder(20, 15, 10, 15));
+
         recipeSummary2 = new JTextArea();
         recipeSummary2.setWrapStyleWord(true);
         recipeSummary2.setLineWrap(true);
+        recipeSummary2.setEditable(false);
         recipeSummary2.setColumns(19);
         recipeSummary2.setRows(7);
-        recipeSummary2.setEditable(false);
-        JScrollPane scrollPane2 = new JScrollPane(recipeSummary2);
 
+        JScrollPane scrollPane2 = new JScrollPane(recipeSummary2);
+        scrollPane2.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         recipeList2 = new JList<>(model2);
         recipeList2.setSelectionMode(SINGLE_SELECTION);
         recipeList2.setLayoutOrientation(JList.VERTICAL);
@@ -158,8 +165,12 @@ public class SpoonacularView extends JFrame {
         mainIngredientsPanel.add(recipePanel2);
 
         tab2.add(mainIngredientsPanel);
+
         tab2.add(recipeSummaryPanel);
+
         tab2.add(recipePic2);
+
+
         tabbedPane.add("Search for a recipe", tab1);
         tabbedPane.add("Lookup recipes by ingredient", tab2);
 
@@ -196,8 +207,8 @@ public class SpoonacularView extends JFrame {
                 displayRecipeInfoDialog(controller, recipeList2);
 
             }
-
         });
+
         mainPanel.add(menuPanel, BorderLayout.SOUTH);
         mainPanel.add(foodJoke, BorderLayout.NORTH);
         mainPanel.add(tabbedPane, BorderLayout.CENTER);
@@ -296,6 +307,7 @@ public class SpoonacularView extends JFrame {
         JDialog d = new JDialog();
         recipeTitle = new JLabel();
         recipeInfo = new JTextArea();
+        recipeInfo.setEditable(false);
         recipeInfo.setLineWrap(true);
         recipeInfo.setWrapStyleWord(true);
         recipeInfo.setEditable(false);
@@ -386,6 +398,14 @@ public class SpoonacularView extends JFrame {
     public static void main(String[] args) {
         Injector injector = Guice.createInjector(new SpoonacularModule());
         SpoonacularView view = injector.getInstance(SpoonacularView.class);
+        try {
+            // Set cross-platform Java L&F (also called "Metal")
+            UIManager.setLookAndFeel(
+                    UIManager.getCrossPlatformLookAndFeelClassName());
+        }
+        catch (UnsupportedLookAndFeelException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+            // handle exception
+        }
         view.setVisible(true);
 
     }
