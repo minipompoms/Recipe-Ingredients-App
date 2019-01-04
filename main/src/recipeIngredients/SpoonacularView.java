@@ -26,7 +26,6 @@ import java.util.stream.IntStream;
 
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 // set up UI look & feel
-//make text areas non editable
 @Singleton
 public class SpoonacularView extends JFrame {
     private JTextArea recipeInfo;
@@ -134,15 +133,18 @@ public class SpoonacularView extends JFrame {
 
         JPanel recipeSummaryPanel = new JPanel();
         recipeSummaryPanel.setLayout(new BoxLayout(recipeSummaryPanel, BoxLayout.PAGE_AXIS));
-        recipeSummaryPanel.setBorder(BorderFactory.createEmptyBorder(20, 15, 20, 15));
+        recipeSummaryPanel.setBorder(BorderFactory.createEmptyBorder(20, 15, 50, 15));
+
         recipeSummary2 = new JTextArea();
         recipeSummary2.setWrapStyleWord(true);
         recipeSummary2.setLineWrap(true);
         recipeSummary2.setEditable(false);
         recipeSummary2.setColumns(19);
         recipeSummary2.setRows(7);
-        JScrollPane scrollPane2 = new JScrollPane(recipeSummary2);
 
+        JScrollPane scrollPane2 = new JScrollPane(recipeSummary2);
+        scrollPane2.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         recipeList2 = new JList<>(model2);
         recipeList2.setSelectionMode(SINGLE_SELECTION);
         recipeList2.setLayoutOrientation(JList.VERTICAL);
@@ -161,7 +163,7 @@ public class SpoonacularView extends JFrame {
         JLabel ingredientsLabel = new JLabel("Enter your ingredients here:");
         mainIngredientsPanel.add(ingredientsLabel);
         mainIngredientsPanel.add(ingredientsPanel);
-        mainIngredientsPanel.add(recipePanel2);
+        mainIngredientsPanel.add(recipeSummaryPanel);
 
         tab2.add(mainIngredientsPanel);
         tab2.add(recipeSummaryPanel);
