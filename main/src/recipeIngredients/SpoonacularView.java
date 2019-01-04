@@ -8,9 +8,7 @@ import javax.imageio.ImageIO;
 import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 import java.awt.event.*;
@@ -26,6 +24,7 @@ import java.util.stream.IntStream;
 
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 // set up UI look & feel
+
 @Singleton
 public class SpoonacularView extends JFrame {
     private JTextArea recipeInfo;
@@ -36,7 +35,6 @@ public class SpoonacularView extends JFrame {
     private JTextArea recipeSummary1;
     private JTextArea recipeSummary2;
     private int recipeID;
-    private int numTab;
     private Map<String, Integer> recipeIDMap = new HashMap<>();
     private DefaultListModel model1 = new DefaultListModel<>();
     private DefaultListModel<String> model2 = new DefaultListModel<>();
@@ -88,6 +86,7 @@ public class SpoonacularView extends JFrame {
         recipePanel1.setBorder(BorderFactory.createEmptyBorder(40, 10, 15, 26));
         recipePanel2.setBorder(BorderFactory.createEmptyBorder(30, 16, 20, 26));
 
+
         JPanel tab1 = new JPanel(new GridLayout(0, 3));
         JPanel tab2 = new JPanel(new GridLayout(0, 3));
 
@@ -96,7 +95,6 @@ public class SpoonacularView extends JFrame {
 
         keywordField = new JTextField();
         keywordField.setColumns(15);
-
         keywordPanel.add(new JLabel("Search for..."));
         keywordPanel.add(keywordField);
         recipeSummary1 = new JTextArea();
@@ -105,6 +103,7 @@ public class SpoonacularView extends JFrame {
         recipeSummary1.setLineWrap(true);
         recipeSummary1.setColumns(22);
         recipeSummary1.setRows(21);
+        recipeSummary1.setEditable(false);
         JScrollPane scrollPane1 = new JScrollPane(recipeSummary1);
         scrollPane1.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -141,6 +140,8 @@ public class SpoonacularView extends JFrame {
         recipeSummary2.setEditable(false);
         recipeSummary2.setColumns(19);
         recipeSummary2.setRows(7);
+
+        recipeSummary2.setEditable(false);
 
         JScrollPane scrollPane2 = new JScrollPane(recipeSummary2);
         scrollPane2.setVerticalScrollBarPolicy(
@@ -200,8 +201,9 @@ public class SpoonacularView extends JFrame {
                     ingredientsBuilder.append(ingredients.get(i)).append(",");
                     findByIngredients(controller, ingredientsBuilder.toString());
                     recipePanel2.add(recipeList2);
-                    displayRecipeInfoDialog(controller, recipeList2);
+
                 });
+                displayRecipeInfoDialog(controller, recipeList2);
 
             }
         });
@@ -229,8 +231,7 @@ public class SpoonacularView extends JFrame {
                 int placeToPut;
                 if (ingredients.size() == 0) {
                     placeToPut = 0;
-                }
-                else {
+                } else {
                     placeToPut = ingredients.size();
                 }
                 ingredients.add(placeToPut, ingredientField.getText());
@@ -244,6 +245,7 @@ public class SpoonacularView extends JFrame {
                 ingredientsPanel.add(removeButtons.get(removeButtons.size() - 1), constraint);
                 repaint();
             }
+            ingredientField.setText("");
         });
         constraint.gridx = 1;
         constraint.gridy = 0;
@@ -286,8 +288,6 @@ public class SpoonacularView extends JFrame {
     }
 
 
-
-
     private void displayRecipeInfoDialog(SpoonacularController controller, JList recipeList) {
 
         recipeList.addMouseListener(new MouseAdapter() {
@@ -308,6 +308,7 @@ public class SpoonacularView extends JFrame {
         recipeInfo.setEditable(false);
         recipeInfo.setLineWrap(true);
         recipeInfo.setWrapStyleWord(true);
+        recipeInfo.setEditable(false);
         d.setSize(700, 500);
         d.setTitle(recipeTitle.getText());
         d.add(recipeInfo);
@@ -330,7 +331,7 @@ public class SpoonacularView extends JFrame {
     }
 
 
-    public void showFindByIngredient(List<Recipe> feed) {
+    void showFindByIngredient(List<Recipe> feed) {
         for (int i = 0; i < feed.size(); i++) {
             String recipe = " " + feed.get(i).getTitle() + "\n";
             model2.add(i, recipe);
@@ -351,13 +352,11 @@ public class SpoonacularView extends JFrame {
         String summary = recipe.getSummary().replaceAll("<[^>]*>", "");
         String title = "\n" + recipe.getTitle();
         if (mode.equals("Search for a recipe")) {
-            numTab = 1;
             recipeSummary1.setText(title + "\n\n" + summary);
             controller.getRecipeImage(recipe.getId(), 1);
 
         }
         if (mode.equals("Lookup recipes by ingredient")) {
-            numTab = 2;
             recipeSummary2.setText(title + "\n\n" + summary);
             controller.getRecipeImage(recipe.getId(), 2);
 
@@ -369,30 +368,30 @@ public class SpoonacularView extends JFrame {
         foodJoke.setText("Here's a joke to make you smile! " + joke + "...");
     }
 
-    void setImage(String imageString, int numTab) throws IOException {
+    void setImage(String imageString, int numTab) {
         ImageIcon imageIcon;
         BufferedImage image;
-        if (!imageString.isEmpty()) {
-            System.setProperty("http.agent", "Chrome");
-            image = ImageIO.read(new URL(imageString));
-            imageIcon = new ImageIcon(image.getScaledInstance(300, 250, Image.SCALE_DEFAULT));
+        try {
+            if (!imageString.isEmpty()) {
+                System.setProperty("http.agent", "Chrome");
+                image = ImageIO.read(new URL(imageString));
+                imageIcon = new ImageIcon(image.getScaledInstance(300, 250, Image.SCALE_DEFAULT));
 
-        } else {
-            imageIcon = new ImageIcon(ImageIO.read(new File("no image.png")).
-                    getScaledInstance(300, 250, Image.SCALE_DEFAULT));
-        }
+            } else {
+                imageIcon = new ImageIcon(ImageIO.read(new File("no image.png")).
+                        getScaledInstance(300, 250, Image.SCALE_DEFAULT));
+            }
 
-        if (numTab == 1) {
-            recipePic1.setIcon(imageIcon);
-        }
-        if (numTab == 2) {
-            recipePic2.setIcon(imageIcon);
+            if (numTab == 1) {
+                recipePic1.setIcon(imageIcon);
+            }
+            if (numTab == 2) {
+                recipePic2.setIcon(imageIcon);
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
-
-
-
-
 
     public static void main(String[] args) {
         Injector injector = Guice.createInjector(new SpoonacularModule());
